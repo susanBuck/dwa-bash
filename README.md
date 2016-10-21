@@ -2,7 +2,7 @@
 
 This repo contains two scripts to make it fast to boot up a students project to help them debug.
 
-Start by cloning the repo to your computer:
+Start by cloning this repo to your computer:
 
 ```bash
 $ git clone https://github.com/susanBuck/dwa-bash
@@ -38,7 +38,7 @@ Or you could create a local path (e.g. `http://student.loc`) and just switch the
 
 ## Script 2: refresh-student-project
 
-## Purpose
+### Purpose
 Syncs up your copy of a student's project with the latest of what they have on Github.
 
 Use if you've already installed their project and just want to update it, discarding any changes you might have.
