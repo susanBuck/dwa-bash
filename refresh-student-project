@@ -8,29 +8,21 @@ fi
 
 STUDENT_NAME=$1
 
-# Report details
-echo '---- DETAILS ---- '
-echo "STUDENT_NAME: ${STUDENT_NAME}"
+cd students/$STUDENT_NAME
 
-echo '---- SYNC WITH GIT ---- '
-# Sync up with their repo, even if you have local changes
-git fetch --all; git reset --hard origin/master
+# Change into the first directory in their folder; should be their project
+cd *
 
-# Create database
-echo '---- REFRESH DATABASE ---- '
-/Applications/MAMP/Library/bin/mysql -uroot -proot -e "drop database student_${STUDENT_NAME}"
-/Applications/MAMP/Library/bin/mysql -uroot -proot -e "create database student_${STUDENT_NAME}"
+# Get the remote url
+REMOTE=$(git config --get branch.master.remote)
+REMOTE_URL=$(git config --get remote.$REMOTE.url)
+BASENAME=$(basename "$REMOTE_URL" .git)
 
-# Initialize project
-echo '---- CHANGE PERMISSIONS ---- '
-sudo chmod -R 777 storage
-sudo chmod -R 777 bootstrap/cache
+# Go back to root of dwa-bash
+cd ../../../
 
-# Composer install
-echo '---- COMPOSER INSTALL ---- '
-composer install
+# Delete their directory
+rm -rf students/$STUDENT_NAME
 
-# Composer install
-echo '---- RUN MIGRATIONS/SEEDS ---- '
-php artisan migrate
-php artisan db:seed
+# Re-run the install script
+./install-student-project $STUDENT_NAME $REMOTE_URL

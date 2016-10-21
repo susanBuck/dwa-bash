@@ -13,7 +13,7 @@ fi
 
 
 # Variables
-DESTINATION="/Applications/MAMP/htdocs/students"
+DESTINATION="students"
 STUDENT_NAME=$1
 REPO_URL=$2
 REPO_NAME=$(echo $REPO_URL | awk -F/ '{print $NF}' | sed -e 's/.git$//')
@@ -32,6 +32,7 @@ echo "LOCAL REPO: ${LOCAL_REPO}"
 # Make directory
 echo '---- MAKE DIRECTORY ---- '
 cd $DESTINATION
+rm -rf $STUDENT_NAME # Remove the directory if it's already there
 mkdir $STUDENT_NAME
 cd $STUDENT_NAME
 
@@ -75,8 +76,8 @@ EOL
 
 # Initialize project
 echo '---- CHANGE PERMISSIONS ---- '
-sudo chmod -R 777 storage
-sudo chmod -R 777 bootstrap/cache
+chmod -R 777 storage
+chmod -R 777 bootstrap/cache
 
 
 # Composer install
