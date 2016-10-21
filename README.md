@@ -1,6 +1,16 @@
+## About
 
-## Script: install-student-project
+This repo contains two scripts to make it fast to boot up a students project to help them debug.
 
+Start by cloning the repo to your computer:
+
+```bash
+$ git clone https://github.com/susanBuck/dwa-bash
+```
+
+## Script 1: install-student-project
+
+### Purpose
 Clones a student's project and takes all the necessary steps to boot it up (set up .env file, composer install, create database, etc.)
 
 ### Setup
@@ -10,8 +20,9 @@ Clones a student's project and takes all the necessary steps to boot it up (set 
 
 ### Usage
 Invoke the script including 2 params: 
-1) studentname 
-2) Their project's github URL
+
+1. `studentname` (Can be anything, first, last, firstlast, just as long as it's unique)
+2. Their project's github URL, e.g. `https://github.com/susanBuck/foobooks`
 
 Example:
 ```bash
@@ -25,8 +36,9 @@ The one manual step you'll have to do is set your localhost to point to the proj
 Or you could create a local path (e.g. `http://student.loc`) and just switch the document root of that.
 
 
-## Script: refresh-student-project
+## Script 2: refresh-student-project
 
+## Purpose
 Syncs up your copy of a student's project with the latest of what they have on Github.
 
 Use if you've already installed their project and just want to update it, discarding any changes you might have.
