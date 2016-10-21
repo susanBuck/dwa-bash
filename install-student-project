@@ -1,25 +1,4 @@
 #!/bin/sh
-#
-# https://gist.github.com/susanBuck/a679ef3184f65d4cae28
-#
-# Instructions
-#
-# SETUP
-# 1. Put this file (install-student-project) somewhere on your computer.
-# 2. Update the DESTINATION variable below, specifying where you want projects to go.
-# 3. Give the script executable permissions: chmod +x install-student-project.
-#
-# USAGE
-# Invoke the script including 2 params: 1) student name 2) their project github URL
-# Example:
-# /Users/Susan/Sites/_shortcuts/install-student-project susan https://github.com/susanBuck/foobooks
-#
-# If you don't want to have to specify the full path to the script,
-# you can add the dir where the script lives to your PATH.
-#
-# The one manual step you'll have to do is set your localhost to point to the project
-# (there's code below to do this, but it does not work properly on all systems).
-# I have a student.loc URL I use, and just switch it to whatever student project I'm working on.
 
 # Check parameters were passed in
 if [ -z "$1" ]; then

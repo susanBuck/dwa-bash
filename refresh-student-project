@@ -1,19 +1,4 @@
 #!/bin/sh
-#
-# https://gist.github.com/susanBuck/a679ef3184f65d4cae28
-#
-# Instructions
-#
-# SETUP
-# 1. Put this file (refresh-student-project) somewhere on your computer.
-# 2. Give the script executable permissions: chmod +x refresh-student-project.
-#
-# USAGE
-# Navigate into the existing student project
-# Invoke the script including 1 params: student name
-# Example:
-# refresh-student-project susan
-
 
 # Check parameters were passed in
 if [ -z "$1" ]; then
