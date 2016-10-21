@@ -2,16 +2,17 @@
 ## Instructions `install-student-project`
 
 ### Setup
-1. Put this file (`install-student-project`) somewhere on your computer.
-2. Update the `DESTINATION` variable below, specifying where you want projects to go.
-3. Give the script executable permissions: `chmod +x install-student-project`.
+1. Navigate into the `dwa-bash` directory on your computer
+2. Give the script executable permissions: `chmod +x install-student-project`
 
 ### Usage
-Invoke the script including 2 params: 1) student name 2) their project github URL
+Invoke the script including 2 params: 1) studentname 2) their project github URL
 Example:
 ```bash
-$ install-student-project susan https://github.com/susanBuck/foobooks
+$ ./install-student-project susan https://github.com/susanBuck/foobooks
 ```
+
+This will create a directory at `./students/susan`.
 
 The one manual step you'll have to do is set your localhost to point to the project (there's code below to do this, but it does not work properly on all systems).
 
@@ -21,7 +22,7 @@ I have a http://student.loc URL I use, and just switch the document root to what
 ## Instructions `refresh-student-project`
 
 ### Setup
-1. Put this file (`refresh-student-project`) somewhere on your computer.
+1. Navigate into the `dwa-bash` directory on your computer
 2. Give the script executable permissions: `chmod +x refresh-student-project`.
 
 ### Usage
