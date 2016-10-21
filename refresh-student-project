@@ -1,0 +1,51 @@
+#!/bin/sh
+#
+# https://gist.github.com/susanBuck/a679ef3184f65d4cae28
+#
+# Instructions
+#
+# SETUP
+# 1. Put this file (refresh-student-project) somewhere on your computer.
+# 2. Give the script executable permissions: chmod +x refresh-student-project.
+#
+# USAGE
+# Navigate into the existing student project
+# Invoke the script including 1 params: student name
+# Example:
+# refresh-student-project susan
+
+
+# Check parameters were passed in
+if [ -z "$1" ]; then
+    echo "Missing studentName parameter"
+    exit
+fi
+
+STUDENT_NAME=$1
+
+# Report details
+echo '---- DETAILS ---- '
+echo "STUDENT_NAME: ${STUDENT_NAME}"
+
+echo '---- SYNC WITH GIT ---- '
+# Sync up with their repo, even if you have local changes
+git fetch --all; git reset --hard origin/master
+
+# Create database
+echo '---- REFRESH DATABASE ---- '
+/Applications/MAMP/Library/bin/mysql -uroot -proot -e "drop database student_${STUDENT_NAME}"
+/Applications/MAMP/Library/bin/mysql -uroot -proot -e "create database student_${STUDENT_NAME}"
+
+# Initialize project
+echo '---- CHANGE PERMISSIONS ---- '
+sudo chmod -R 777 storage
+sudo chmod -R 777 bootstrap/cache
+
+# Composer install
+echo '---- COMPOSER INSTALL ---- '
+composer install
+
+# Composer install
+echo '---- RUN MIGRATIONS/SEEDS ---- '
+php artisan migrate
+php artisan db:seed

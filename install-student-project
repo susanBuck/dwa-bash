@@ -1,0 +1,135 @@
+#!/bin/sh
+#
+# https://gist.github.com/susanBuck/a679ef3184f65d4cae28
+#
+# Instructions
+#
+# SETUP
+# 1. Put this file (install-student-project) somewhere on your computer.
+# 2. Update the DESTINATION variable below, specifying where you want projects to go.
+# 3. Give the script executable permissions: chmod +x install-student-project.
+#
+# USAGE
+# Invoke the script including 2 params: 1) student name 2) their project github URL
+# Example:
+# /Users/Susan/Sites/_shortcuts/install-student-project susan https://github.com/susanBuck/foobooks
+#
+# If you don't want to have to specify the full path to the script,
+# you can add the dir where the script lives to your PATH.
+#
+# The one manual step you'll have to do is set your localhost to point to the project
+# (there's code below to do this, but it does not work properly on all systems).
+# I have a student.loc URL I use, and just switch it to whatever student project I'm working on.
+
+# Check parameters were passed in
+if [ -z "$1" ]; then
+    echo "Missing studentName parameter"
+    exit
+fi
+
+if [ -z "$2" ]; then
+    echo "Missing githubUrl parameter"
+    exit
+fi
+
+
+# Variables
+DESTINATION="/Applications/MAMP/htdocs/students"
+STUDENT_NAME=$1
+REPO_URL=$2
+REPO_NAME=$(echo $REPO_URL | awk -F/ '{print $NF}' | sed -e 's/.git$//')
+LOCAL_REPO=$DESTINATION"/"$STUDENT_NAME"/"$REPO_NAME"/public"
+
+
+# Report details
+echo '---- DETAILS ---- '
+echo "STUDENT_NAME: ${STUDENT_NAME}"
+echo "REPO_URL: ${REPO_URL}"
+echo "REPO_NAME: ${REPO_NAME}"
+echo "DESTINATION: ${DESTINATION}"
+echo "LOCAL REPO: ${LOCAL_REPO}"
+
+
+# Make directory
+echo '---- MAKE DIRECTORY ---- '
+cd $DESTINATION
+mkdir $STUDENT_NAME
+cd $STUDENT_NAME
+
+
+# Clone repo
+echo '---- CLONE PROJECT ---- '
+git clone $REPO_URL $REPO_NAME
+cd $REPO_NAME
+
+
+# Create database
+echo '---- CREATE DATABASE ---- '
+/Applications/MAMP/Library/bin/mysql -uroot -proot -e "drop database student_${STUDENT_NAME}"
+/Applications/MAMP/Library/bin/mysql -uroot -proot -e "create database student_${STUDENT_NAME}"
+
+
+# Create env file
+echo '---- CREATE .env FILE ---- '
+cat >.env <<EOL
+APP_ENV=local
+APP_DEBUG=true
+APP_KEY=yourkeyhere
+
+DB_HOST=localhost
+DB_DATABASE=student_${STUDENT_NAME}
+DB_USERNAME=root
+DB_PASSWORD=root
+
+CACHE_DRIVER=file
+SESSION_DRIVER=file
+QUEUE_DRIVER=sync
+
+MAIL_DRIVER=smtp
+MAIL_HOST=mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+EOL
+
+
+# Initialize project
+echo '---- CHANGE PERMISSIONS ---- '
+sudo chmod -R 777 storage
+sudo chmod -R 777 bootstrap/cache
+
+
+# Composer install
+echo '---- COMPOSER INSTALL ---- '
+composer install
+
+
+# Generate key
+echo '---- GENEREATE KEY ---- '
+php artisan key:generate
+
+
+# The following is not working properly, so commenting out for now
+#
+# # Add location to hosts and vhosts Files
+# echo '---- SET UP VHOSTS ----'
+# echo "127.0.0.1 ${STUDENT_NAME}.loc" | sudo tee -a /private/etc/hosts
+#
+# echo "<VirtualHost *:80>
+#      ServerName ${STUDENT_NAME}.loc
+#      DocumentRoot ${LOCAL_REPO}
+#      <Directory ${LOCAL_REPO}>
+#          Options Indexes FollowSymLinks MultiViews
+#          AllowOverride All
+#          Order allow,deny
+#          allow from all
+#      </directory>
+#  </VirtualHost>" | sudo tee -a /Applications/MAMP/conf/apache/extra/httpd-vhosts.conf
+
+
+# restart Apache
+# echo '---- RESTART APACHE ----'
+# /Applications/MAMP/bin/apache2/bin/apachectl restart
+# mamp stopapache
+# mamp startapache
