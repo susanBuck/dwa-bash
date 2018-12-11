@@ -30,7 +30,7 @@ echo "LOCAL REPO: ${LOCAL_REPO}"
 
 
 # Make directory
-echo '---- MAKE DIRECTORY ---- '
+echo '---- MAKE/REPlACE DIRECTORY ---- '
 cd $DESTINATION
 rm -rf $STUDENT_NAME # Remove the directory if it's already there
 mkdir $STUDENT_NAME
@@ -89,27 +89,37 @@ composer install
 echo '---- GENEREATE KEY ---- '
 php artisan key:generate
 
-
-# The following is not working properly, so commenting out for now
-#
-# # Add location to hosts and vhosts Files
-# echo '---- SET UP VHOSTS ----'
-# echo "127.0.0.1 ${STUDENT_NAME}.loc" | sudo tee -a /private/etc/hosts
-#
-# echo "<VirtualHost *:80>
-#      ServerName ${STUDENT_NAME}.loc
-#      DocumentRoot ${LOCAL_REPO}
-#      <Directory ${LOCAL_REPO}>
-#          Options Indexes FollowSymLinks MultiViews
-#          AllowOverride All
-#          Order allow,deny
-#          allow from all
-#      </directory>
-#  </VirtualHost>" | sudo tee -a /Applications/MAMP/conf/apache/extra/httpd-vhosts.conf
+# Migrations/seeds
+echo '---- RUN MIGRATIONS & SEEDS ---- '
+php artisan migrate:fresh --seed
 
 
-# restart Apache
-# echo '---- RESTART APACHE ----'
-# /Applications/MAMP/bin/apache2/bin/apachectl restart
-# mamp stopapache
-# mamp startapache
+echo '---- CONFIG VHOST ---- '
+# Default location of the apache conf file for MAMP
+CONF_FILE="/Applications/MAMP/conf/apache/extra/httpd-vhosts.conf"
+
+# Fine the lines that contain the string `DocumentRoot`
+OLD_LINE=$(cat $CONF_FILE | grep DocumentRoot)
+echo "OLD_LINE:$OLD_LINE"
+
+## Set new doc root to current directory
+NEW_LINE="    DocumentRoot $(pwd)/public"
+echo "NEW_LINE:$NEW_LINE"
+
+## Replace doc root strings in conf file
+sed -i.bak -e "s|${OLD_LINE}|${NEW_LINE}|g" $CONF_FILE
+
+# Fine the lines that contain the string `DocumentRoot`
+OLD_LINE=$(cat $CONF_FILE | grep \<Directory)
+echo "OLD_LINE:$OLD_LINE"
+
+### Set new doc root to current directory
+NEW_LINE="    <Directory $(pwd)/public>"
+echo "NEW_LINE:$NEW_LINE"
+
+### Replace doc root strings in conf file
+sed -i.bak -e "s|${OLD_LINE}|${NEW_LINE}|g" $CONF_FILE
+
+## Restart server
+sudo /Applications/MAMP/Library/bin/apachectl -k restart && sleep 2 && open "http://student.loc"
+
