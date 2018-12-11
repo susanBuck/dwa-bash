@@ -1,2 +1,5 @@
 /students/*
 ! /students/README.md
+.idea/dwa-bash.iml
+.idea/modules.xml
+.idea/workspace.xml
